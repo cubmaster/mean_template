@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: enterprise-gateway
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: 5000m
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "server: none";
+    nginx.ingress.kubernetes.io/websocket-services: enterprise-gateway
+    nginx.org/websocket-services: enterprise-gateway
+  name: i-eg
+  namespace: enterprise-gateway
+spec:
+  rules:
+    - host: kubernetes.docker.internal
+      http:
+        paths:
+          - backend:
+              serviceName: enterprise-gateway
+              servicePort: 8888
+            path: /gateway/?(.*)
+
